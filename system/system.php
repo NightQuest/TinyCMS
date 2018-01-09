@@ -31,6 +31,7 @@
 				if( strtolower($lib) == "config" )
 					continue;
 
+				// Make sure the library exists, then load & initialize it
 				if( is_file(SYSTEM_PATH.'libraries/'.strtolower($lib).'.php') )
 				{
 					include_once(SYSTEM_PATH.'libraries/'.strtolower($lib).'.php');
