@@ -17,6 +17,6 @@
 
 	// Initialize System
 	require_once(SYSTEM_PATH.'system.php');
-	$System = get_system();
+	$System = System::getSingleton();
 
 ?>

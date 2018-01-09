@@ -16,7 +16,8 @@
 
 	class System
 	{
-		private static $classes;
+		private $classes;
+		private static $singleton;
 
 		// The construct for System initializes all of our libraries
 		public function __construct()
@@ -48,15 +49,13 @@
 			else
 				throw new Exception("$name is not a loaded library.");
 		}
+
+		// Function for Singleton-ing the class. This way we always are using the same instance.
+		public static function getSingleton()
+		{
+			if( !isset(self::$singleton) )
+				self::$singleton = new self;
+
+			return self::$singleton;
+		}
 	};
-
-	// Function for Singleton-ing the class. This way we always are using the same instance.
-	function &get_system()
-	{
-		static $sys = null;
-
-		if( $sys === null )
-			$sys = new System;
-
-		return $sys;
-	}
