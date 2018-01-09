@@ -51,6 +51,8 @@
 
 		public function __get($name)
 		{
+			// Check to make sure the key actually exists
+			// Otherwise by using $_SESSION[] we might create an empty key
 			if( array_key_exists($name, $_SESSION) )
 				return $_SESSION[$name];
 		}
