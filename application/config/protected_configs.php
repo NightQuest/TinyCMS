@@ -1,0 +1,4 @@
+<?php
+	$protectedConfigs = array(
+		'libraries'
+	);
