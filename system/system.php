@@ -11,19 +11,21 @@
 		die("Access Forbidden");
 	}
 
-	// Load the config class
-	require_once(SYSTEM_PATH.'libraries/config.php');
-
 	class System
 	{
-		private $classes;
-		private static $singleton = null;
+		private $classes = array();
 
 		// The construct for System initializes all of our libraries
-		public function __construct()
+		private function __construct()
 		{
-			$this->classes['config'] = new Config();
+			// Load the config class
+			require_once(SYSTEM_PATH.'libraries/config.php');
 
+			$this->classes['config'] = Config::getSingleton();
+		}
+
+		private function loadLibraries()
+		{
 			// Load all the libraries specified in the config
 			foreach($this->classes['config']->libraries as $lib)
 			{
@@ -54,9 +56,13 @@
 		// Function for Singleton-ing the class. This way we always are using the same instance.
 		public static function getSingleton()
 		{
-			if( self::$singleton == null )
-				self::$singleton = new self;
+			static $singleton = null;
+			if( $singleton === null )
+			{
+				$singleton = new self;
+				$singleton->loadLibraries();
+			}
 
-			return self::$singleton;
+			return $singleton;
 		}
 	};
