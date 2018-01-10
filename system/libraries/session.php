@@ -18,7 +18,7 @@
 
 		private $id = "";
 		private $state = self::STATE_NOT_STARTED;
-		private static $singleton;
+		private static $singleton = null;
 
 		public function __construct()
 		{
@@ -38,7 +38,7 @@
 		// Function for Singleton-ing the class. This way we always are using the same instance.
 		public static function getSingleton()
 		{
-			if( !isset(self::$singleton) )
+			if( self::$singleton != null )
 				self::$singleton = new self;
 			self::$singleton->initialize();
 			return self::$singleton;
