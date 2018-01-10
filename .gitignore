@@ -1,1 +1,2 @@
-application/config/config.php
+application/config/config.json
+application/config/protected_configs.json

@@ -13,49 +13,53 @@
 
 	class Config
 	{
-		private static $config;
-		private static $protectedConfigs;
+		private $config;
+		private $protectedConfigs;
 
-		public function __construct()
+		private function __construct()
 		{
-			if( !isset(self::$config) )
-			{
-				// Make sure the config file actually exists
-				if( !is_file(APPLICATION_PATH.'config/config.php') )
-					die("Missing application config file.");
+			// Make sure the config file actually exists
+			if( !file_exists(APPLICATION_PATH.'config/config.json') ||
+				!is_file(APPLICATION_PATH.'config/config.json') )
+				die("Missing application config file.");
 
-				include_once APPLICATION_PATH.'config/config.php';
-				if( isset($config) && is_array($config) )
-				{
-					self::$config = $config;
-					unset($config);
-				}
-			}
+			$json_file = file_get_contents(APPLICATION_PATH.'config/config.json');
+			if( $json_file != false )
+				$this->config = json_decode($json_file);
 
-			if( !isset(self::$protectedConfigs) )
+			// Only load the protected config if it exists
+			if( file_exists(APPLICATION_PATH.'config/protected_config.json') &&
+				is_file(APPLICATION_PATH.'config/protected_config.json') )
 			{
-				include_once APPLICATION_PATH.'config/protected_configs.php';
-				if( isset($protectedConfigs) && is_array($protectedConfigs) )
-				{
-					self::$protectedConfigs = $protectedConfigs;
-					unset($protectedConfigs);
-				}
+				$json_file = file_get_contents(APPLICATION_PATH.'config/protected_configs.json');
+				if( $json_file != false )
+					$this->protectedConfigs = json_decode($json_file);
 			}
 		}
 
 		public function __get($name)
 		{
-			if( array_key_exists($name, self::$config) )
-				return self::$config[$name];
+			if( array_key_exists($name, $this->config) )
+				return $this->config->$name;
 			else
 				throw new Exception("$name does not exist.");
 		}
 
 		public function __set($name, $value)
 		{
-			if( !array_key_exists($name, self::$protectedConfigs) || self::$protectedConfigs[$name] === false )
-				self::$config[$name] = $value;
+			if( !array_key_exists($name, $this->protectedConfigs) || $this->protectedConfigs->$name === false )
+				$this->config->$name = $value;
 			else
 				throw new Exception("$name is protected, and cannot be modified.");
+		}
+
+		// Function for Singleton-ing the class. This way we always are using the same instance.
+		public static function getSingleton()
+		{
+			static $singleton = null;
+			if( $singleton === null )
+				$singleton = new self;
+
+			return $singleton;
 		}
 	};
