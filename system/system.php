@@ -54,7 +54,7 @@
 		// Function for Singleton-ing the class. This way we always are using the same instance.
 		public static function getSingleton()
 		{
-			if( self::$singleton != null )
+			if( self::$singleton == null )
 				self::$singleton = new self;
 
 			return self::$singleton;
