@@ -34,7 +34,7 @@
 
 						// Only add the module to our loaded modules if it has an index function that's callable
 						$tmp = new $module;
-						if( method_exists($tmp, 'index') && is_callable($tmp, 'index') )
+						if( method_exists($tmp, 'index') && is_callable(array($tmp, 'index')) )
 							$this->modules[$module] = $tmp;
 					}
 					else
