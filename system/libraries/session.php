@@ -11,7 +11,7 @@
 		die("Access Forbidden");
 	}
 
-	class Session
+	class Session extends Library
 	{
 		const STATE_STARTED = TRUE;
 		const STATE_NOT_STARTED = FALSE;
@@ -22,6 +22,10 @@
 
 		public function __construct()
 		{
+			// Call the parents ctor
+			parent::__construct();
+
+			// Store the session ID
 			$this->id = session_id();
 		}
 

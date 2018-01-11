@@ -11,15 +11,18 @@
 		die("Access Forbidden");
 	}
 
-	class HMVC
+	class HMVC extends Library
 	{
 		private $modules = array();
 
 		// Load all of our pages in the construct
 		public function __construct()
 		{
+			// Call the parents ctor
+			parent::__construct();
+
 			//$config = new Config;
-			$config = System::getSingleton()->config;
+			$config = $this->system->config;
 
 			// Only load modules that are specified in the config file
 			if( is_array($config->modules) )

@@ -15,7 +15,7 @@
 	{
 		public function __construct()
 		{
-			$config = System::getSingleton()->config;
+			$config = This->system->config;
 
 			if( isset($config->database) &&
 				is_array($config->database) &&

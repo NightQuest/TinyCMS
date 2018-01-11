@@ -15,6 +15,9 @@
 	unset($system_path);
 	unset($application_path);
 
+	// Include resources
+	include_once SYSTEM_PATH.'resources/library.php';
+
 	// Initialize System
 	require_once(SYSTEM_PATH.'system.php');
 	$System = System::getSingleton();
