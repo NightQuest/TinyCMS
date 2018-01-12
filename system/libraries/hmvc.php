@@ -33,7 +33,7 @@
 					$module_file = APPLICATION_PATH.'modules/'.strtolower($module).'/controller/'.strtolower($module).'.php';
 					if( file_exists($module_file) && is_file($module_file) )
 					{
-						include_once($module_file);
+						include_once $module_file;
 
 						// Only add the module to our loaded modules if it has an index function that's callable
 						$tmp = new $module;

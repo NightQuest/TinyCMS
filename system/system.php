@@ -19,7 +19,7 @@
 		private function __construct()
 		{
 			// Load the config class
-			require_once(SYSTEM_PATH.'libraries/config.php');
+			require_once SYSTEM_PATH.'libraries/config.php';
 
 			$this->classes['config'] = Config::getSingleton();
 		}
@@ -36,7 +36,7 @@
 				// Make sure the library exists, then load & initialize it
 				if( is_file(SYSTEM_PATH.'libraries/'.strtolower($lib).'.php') )
 				{
-					include_once(SYSTEM_PATH.'libraries/'.strtolower($lib).'.php');
+					include_once SYSTEM_PATH.'libraries/'.strtolower($lib).'.php';
 					$tmp = new $lib;
 					$this->classes[strtolower(get_class($tmp))] = $tmp;
 				}
