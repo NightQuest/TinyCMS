@@ -19,6 +19,6 @@
 		{
 			$this->system = System::getSingleton();
 			if( $this->system == null )
-				throw new ErrorException('Module_controller::system is null');
+				throw new ErrorException('Module_Controller::system is null');
 		}
 	};
