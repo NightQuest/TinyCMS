@@ -16,7 +16,8 @@
 	unset($application_path);
 
 	// Include resources
-	include_once SYSTEM_PATH.'resources/library.php';
+	require_once SYSTEM_PATH.'resources/library.php';
+	require_once SYSTEM_PATH.'resources/module_controller.php';
 
 	// Initialize System
 	require_once(SYSTEM_PATH.'system.php');

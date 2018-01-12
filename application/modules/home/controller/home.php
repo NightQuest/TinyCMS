@@ -11,15 +11,15 @@
 		die("Access Forbidden");
 	}
 
-	class Home
+	class Home extends Module_Controller
 	{
 		public function __construct()
 		{
-
+			parent::__construct();
 		}
 
 		public function index()
 		{
-
+			
 		}
 	};
