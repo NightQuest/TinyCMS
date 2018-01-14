@@ -41,7 +41,7 @@
 						// Only add the module to our loaded modules if it has an index function that's callable
 						$tmp = new $module;
 						if( method_exists($tmp, 'index') && is_callable(array($tmp, 'index')) )
-							$this->modules[$module] = $tmp;
+							$this->modules[strtolower($module)] = $tmp;
 					}
 					else
 					{
@@ -51,9 +51,48 @@
 			}
 		}
 
+		// Function for parsing the path and handing everything off to the modules
 		public function handlePage()
 		{
-			//TODO: Implement the page handler.
+			// Default to home_module
+			$module = $this->system->config->home_module;
+			$path = 'index'; // "/"
+			$args = array();
+
+			// if we're not on the default page, figure out where we are
+			if( $_SERVER['QUERY_STRING'] != '/' )
+			{
+				$query = explode('/', $_SERVER['QUERY_STRING']);
+				$query_elements = count($query);
+
+				// Make sure we have this page loaded
+				if( $query_elements >= 2 && array_key_exists(strtolower($query[1]), $this->modules) )
+				{
+					$module = strtolower($query[1]);
+
+					// Also make sure the function exists
+					if( $query_elements >= 3 && method_exists($this->modules[$module], $query[2]) &&
+						is_callable(array($this->modules[$module], $query[2])) )
+					{
+						$path = $query[2];
+
+						// Build the arguments for the function
+						if( $query_elements >= 4 )
+						{
+							for( $x = 3; $x <= $query_elements-1; $x++ )
+								$args[] = $query[$x];
+						}
+					}
+				}
+			}
+
+			// If we have a valid module and path (function), execute it
+			if( array_key_exists($module, $this->modules) &&
+				method_exists($this->modules[$module], $path) &&
+				is_callable(array($this->modules[$module], $path)) )
+			{
+				call_user_func_array(array($this->modules[$module], $path), $args);
+			}
 		}
 
 		// Provide a getter for the modules - we're skipping setters and callers for now.

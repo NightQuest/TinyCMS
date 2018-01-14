@@ -6,5 +6,6 @@
 		"database": "database"
 	},
 	"modules": ["Home"],
+	"home_module": "Home",
 	"libraries": ["Session", "Database", "HMVC"]
 }

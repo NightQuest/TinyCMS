@@ -18,8 +18,11 @@
 			parent::__construct();
 		}
 
-		public function index()
+		public function index($noun = null)
 		{
-			
+			if( $noun == null )
+				$noun = "World";
+
+			echo "Hello $noun!";
 		}
 	};
