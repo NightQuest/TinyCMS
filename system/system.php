@@ -16,7 +16,6 @@
 		private $classes = array();
 		private $pageHandler = null;
 
-		// The construct for System initializes all of our libraries
 		private function __construct()
 		{
 			// Load the config class
