@@ -21,6 +21,9 @@
 			// Call the parents ctor
 			parent::__construct();
 
+			// Register HMVC as a page handler
+			$this->system->registerPageHandler($this);
+
 			//$config = new Config;
 			$config = $this->system->config;
 
@@ -46,6 +49,11 @@
 					}
 				}
 			}
+		}
+
+		public function handlePage()
+		{
+			//TODO: Implement the page handler.
 		}
 
 		// Provide a getter for the modules - we're skipping setters and callers for now.

@@ -23,4 +23,11 @@
 	require_once SYSTEM_PATH.'system.php';
 	$System = System::getSingleton();
 
+	// Make sure we have a page handler
+	if( !$System->hasPageHandler() )
+		die("System doesn't have a page handler (MVC, HMVC, etc).");
+
+	// Let the page handler do the rest
+	$System->pageHandler->handlePage();
+
 ?>

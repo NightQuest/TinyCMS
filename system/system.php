@@ -14,6 +14,7 @@
 	class System
 	{
 		private $classes = array();
+		private $pageHandler = null;
 
 		// The construct for System initializes all of our libraries
 		private function __construct()
@@ -33,6 +34,10 @@
 				if( strtolower($lib) == "config" )
 					continue;
 
+				// Also prevent pageHandler from being used as a library name
+				if( strtolower($lib) == "pagehandler" )
+					continue;
+
 				// Make sure the library exists, then load & initialize it
 				if( is_file(SYSTEM_PATH.'libraries/'.strtolower($lib).'.php') )
 				{
@@ -45,12 +50,31 @@
 			}
 		}
 
+		public function hasPageHandler() { return $this->pageHandler != null; }
+
+		public function registerPageHandler($handler)
+		{
+			if( $handler == null )
+				return;
+
+			// Make sure we don't already have a page handler
+			if( $this->pageHandler != null )
+				throw new Exception("System::registerPageHandler: Cannot register more than one page handler.");
+
+			$this->pageHandler = $handler;
+		}
+
 		public function __get($name)
 		{
 			if( array_key_exists($name, $this->classes) )
 				return $this->classes[$name];
 			else
-				throw new Exception("$name is not a loaded library.");
+			{
+				if( strtolower($name) == 'pagehandler' )
+					return $this->pageHandler;
+				else
+					throw new Exception("$name is not a loaded library.");
+			}
 		}
 
 		// Function for Singleton-ing the class. This way we always are using the same instance.
