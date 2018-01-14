@@ -55,9 +55,10 @@
 		public function handlePage()
 		{
 			// Default to home_module
-			$module = $this->system->config->home_module;
+			$module = strtolower($this->system->config->home_module);
 			$path = 'index'; // "/"
 			$args = array();
+			$error = false;
 
 			// if we're not on the default page, figure out where we are
 			if( $_SERVER['QUERY_STRING'] != '/' )
@@ -66,28 +67,54 @@
 				$query_elements = count($query);
 
 				// Make sure we have this page loaded
-				if( $query_elements >= 2 && array_key_exists(strtolower($query[1]), $this->modules) )
+				if( $query_elements >= 2 && strlen($query[1]) )
 				{
 					$module = strtolower($query[1]);
 
-					// Also make sure the function exists
-					if( $query_elements >= 3 && method_exists($this->modules[$module], $query[2]) &&
-						is_callable(array($this->modules[$module], $query[2])) )
+					if( array_key_exists(strtolower($query[1]), $this->modules) )
 					{
-						$path = $query[2];
-
-						// Build the arguments for the function
-						if( $query_elements >= 4 )
+						// Also make sure the function exists
+						if( $query_elements >= 3 && strlen($query[2]) )
 						{
-							for( $x = 3; $x <= $query_elements-1; $x++ )
-								$args[] = $query[$x];
+							$path = $query[2];
+
+							if( method_exists($this->modules[$module], $query[2]) &&
+								is_callable(array($this->modules[$module], $query[2])) )
+							{
+								// Build the arguments for the function
+								if( $query_elements >= 4 )
+								{
+									for( $x = 3; $x <= $query_elements-1; $x++ )
+										$args[] = $query[$x];
+								}
+							}
+							else
+								$error = 404;
 						}
 					}
+					else
+						$error = 404;
 				}
 			}
 
-			// If we have a valid module and path (function), execute it
-			if( array_key_exists($module, $this->modules) &&
+			// If we have an error (module or path don't exist), display it
+			if( $error != false )
+			{
+				// Allow module to override if present (errorHandler)
+				if( array_key_exists('errorhandler', $this->modules) )
+				{
+					if( method_exists($this->modules[$module], 'handle'.$error) &&
+						is_callable(array($this->modules[$module], 'handle'.$error)) )
+					{
+						call_user_func_array(array($this->modules[$module], 'handle'.$error), array());
+					}
+				}
+				else
+					throw new Exception("Error: $error");
+
+			}
+			else if( // If we have a valid module and path (function), execute it
+				array_key_exists($module, $this->modules) &&
 				method_exists($this->modules[$module], $path) &&
 				is_callable(array($this->modules[$module], $path)) )
 			{
