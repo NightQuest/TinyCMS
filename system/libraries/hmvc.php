@@ -71,15 +71,15 @@
 				{
 					$module = strtolower($query[1]);
 
-					if( array_key_exists(strtolower($query[1]), $this->modules) )
+					if( array_key_exists($module, $this->modules) )
 					{
 						// Also make sure the function exists
 						if( $query_elements >= 3 && strlen($query[2]) )
 						{
 							$path = $query[2];
 
-							if( method_exists($this->modules[$module], $query[2]) &&
-								is_callable(array($this->modules[$module], $query[2])) )
+							if( method_exists($this->modules[$module], $path) &&
+								is_callable(array($this->modules[$module], $path)) )
 							{
 								// Build the arguments for the function
 								if( $query_elements >= 4 )
@@ -89,11 +89,11 @@
 								}
 							}
 							else
-								$error = 404;
+								$error = array(404, $module, $path);
 						}
 					}
 					else
-						$error = 404;
+						$error = array(404, $module);
 				}
 			}
 
@@ -103,15 +103,30 @@
 				// Allow module to override if present (errorHandler)
 				if( array_key_exists('errorhandler', $this->modules) )
 				{
-					if( method_exists($this->modules[$module], 'handle'.$error) &&
-						is_callable(array($this->modules[$module], 'handle'.$error)) )
+					if( method_exists($this->modules[$module], 'handle'.$error[0]) &&
+						is_callable(array($this->modules[$module], 'handle'.$error[0])) )
 					{
-						call_user_func_array(array($this->modules[$module], 'handle'.$error), array());
+						call_user_func_array(array($this->modules[$module], 'handle'.$error[0]), $error);
 					}
 				}
 				else
-					throw new Exception("Error: $error");
-
+				{
+					// Produce a somewhat clear error message.
+					// Ex: 404 - home/index
+					$errorStr = "Error: $error[0]";
+					$error_count = count($error);
+					if( $error_count >= 2 )
+					{
+						$errorStr .= ' - ';
+						for( $x = 1; $x < $error_count; $x++ )
+						{
+							if( $x != 1 )
+								$errorStr .= '/';
+							$errorStr .= $error[$x];
+						}
+					}
+					throw new Exception($errorStr);
+				}
 			}
 			else if( // If we have a valid module and path (function), execute it
 				array_key_exists($module, $this->modules) &&
