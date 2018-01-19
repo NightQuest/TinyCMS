@@ -13,18 +13,19 @@
 
 	class Database extends mysqli
 	{
+		private $system = null;
+
 		public function __construct()
 		{
-			$config = This->system->config;
+			$this->system = System::getSingleton();
+			$config = $this->system->config;
 
-			if( isset($config->database) &&
-				is_array($config->database) &&
-				isset($config->database['hostname']) &&
-				isset($config->database['username']) &&
-				isset($config->database['password']) &&
-				isset($config->database['database']) )
+			if( isset($config->database->hostname) &&
+				isset($config->database->username) &&
+				isset($config->database->password) &&
+				isset($config->database->database) )
 			{
-				parent::__construct($config->database['hostname'], $config->database['username'], $config->database['password'], $config->database['database']);
+				parent::__construct($config->database->hostname, $config->database->username, $config->database->password, $config->database->database);
 
 				if( mysqli_connect_error() )
 					throw new Exception('Error ['.mysqli_connect_errno().']: '.mysqli_connect_error());
