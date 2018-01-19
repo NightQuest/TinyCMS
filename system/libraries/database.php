@@ -38,12 +38,14 @@
 		// Ex: $db->pquery("SELECT * FROM `table` WHERE `id` = '?'", $id)
 		public function pquery($query, $args = '', $resultmode = MYSQLI_STORE_RESULT)
 		{
-			$real_query = '';
+			// Default to acting like mysqli::query()
+			$real_query = $query;
 
-			// If we have no args, treat this as if just calling query()
-			if( !is_array($args) )
-				$real_query = $query;
-			else
+			// If we have a single argument, turn it into an array
+			if( !is_array($args) && strlen($args) )
+				$args = array($args);
+
+			if( is_array($args) )
 			{
 				// Escape each argument
 				for( $x = 0; $x < count($args)-1; $x++ )
